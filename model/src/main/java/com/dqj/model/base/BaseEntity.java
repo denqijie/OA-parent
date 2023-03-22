@@ -13,7 +13,7 @@ import java.util.Map;
 @Data
 public class BaseEntity implements Serializable {
 
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.AUTO) // IdType.AUTO 主键自动增长
     private Long id;
 
     @TableField("create_time")
@@ -22,10 +22,10 @@ public class BaseEntity implements Serializable {
     @TableField("update_time")
     private Date updateTime;
 
-    @TableLogic
+    @TableLogic // MP封装的逻辑刪除注解
     @TableField("is_deleted")
     private Integer isDeleted;
 
-    @TableField(exist = false)
+    @TableField(exist = false) //   exist = false 表示表里面可允许没有对应字段
     private Map<String,Object> param = new HashMap<>();
 }
