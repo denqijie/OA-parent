@@ -11,12 +11,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
+/**
+ *  角色管理CRUD接口
+ */
 @Api(tags = "角色管理接口")
 @RestController
 @RequestMapping("/admin/system/sysRole")
@@ -24,6 +25,17 @@ public class SysRoleController {
     //  注入Service
     @Autowired
     private SysRoleService sysRoleService;
+
+    /**
+     *  根据id查询角色
+     */
+    @ApiOperation("根据ID查询角色")
+    @GetMapping("/find/{id}")
+    public Result find(@PathVariable Long id){
+        //  根据id查询数据
+        SysRole sysRole = sysRoleService.getById(id);
+        return Result.ok(sysRole);
+    }
 
     /**
      *  查询所有角色 返回统一数据结果
@@ -42,8 +54,8 @@ public class SysRoleController {
      *  SysRoleQueryVo 条件对象(roleName)
      */
     @ApiOperation("条件分页查询")
-    @GetMapping("{page}/{limit}")
-    public Result pageQueryRole(@PathVariable long page, @PathVariable long limit, SysRoleQueryVo sysRoleQueryVo){
+    @GetMapping("/{page}/{limit}")
+    public Result pageQueryRole(@PathVariable Long page, @PathVariable Long limit, SysRoleQueryVo sysRoleQueryVo){
         //  1.创建Page对象，传递相关分页参数
         Page<SysRole> pageParam = new Page<>(page, limit);
         //  2.封装条件，判断条件是否为空，不为空进行封装
@@ -58,4 +70,65 @@ public class SysRoleController {
         IPage<SysRole> rolePages = sysRoleService.page(pageParam, wrapper);
         return Result.ok(rolePages);
     }
+
+    /**
+     *  添加角色
+     */
+    @ApiOperation("添加角色") // api文档中文注释
+    @PostMapping("/save")
+    public Result save(@RequestBody SysRole sysRole){   //  @RequestBody通过请求体传递 以JSON格式封装数据
+        //  调用service方法实现
+        boolean is_success = sysRoleService.save(sysRole);
+        //  判断条件
+        if(is_success){
+            return Result.ok();
+        }
+        return Result.fail();
+    }
+
+    /**
+     *  修改角色
+     */
+    @ApiOperation("修改角色") // api文档中文注释
+    @PutMapping("/update")
+    public Result update(@RequestBody SysRole sysRole){   //  @RequestBody通过请求体传递 以JSON格式封装数据
+        //  调用service方法实现
+        boolean is_success = sysRoleService.updateById(sysRole);
+        //  判断条件
+        if(is_success){
+            return Result.ok();
+        }
+        return Result.fail();
+    }
+
+    /**
+     *  根据id刪除
+     */
+    @ApiOperation("根据ID刪除角色")
+    @DeleteMapping("/remove/{id}")
+    public Result remove(@PathVariable Long id){
+        //  调用service方法实现
+        boolean is_success = sysRoleService.removeById(id);
+        //  判断条件
+        if(is_success){
+            return Result.ok();
+        }
+        return Result.fail();
+    }
+
+    /**
+     *  批量刪除
+     */
+    @ApiOperation("批量刪除")
+    @DeleteMapping("/batchRemove")
+    public Result batchRemove(@RequestBody List<Long> idList){
+        //  list集合转成JSON数组格式
+        boolean is_success = sysRoleService.removeByIds(idList);
+        //  判断条件
+        if(is_success){
+            return Result.ok();
+        }
+        return Result.fail();
+    }
+
 }
