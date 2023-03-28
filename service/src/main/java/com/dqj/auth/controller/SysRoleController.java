@@ -121,7 +121,7 @@ public class SysRoleController {
      */
     @ApiOperation("批量刪除")
     @DeleteMapping("/batchRemove")
-    public Result batchRemove(@RequestBody List<Long> idList){
+    public Result batchRemove(@RequestBody List<Long> idList){ //  @RequestBody通过请求体传递 以JSON格式封装数据
         //  list集合转成JSON数组格式
         boolean is_success = sysRoleService.removeByIds(idList);
         //  判断条件
