@@ -4,13 +4,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.dqj.model.system.SysUser;
 
 /**
- * <p>
- * 用户表 服务类
- * </p>
- *
- * @author dqj
- * @since 2023-03-28
+ *  User业务层
  */
 public interface SysUserService extends IService<SysUser> {
+    /**
+     *  更新状态
+     */
+    void updateStatus(Long id, Integer status);
 
 }

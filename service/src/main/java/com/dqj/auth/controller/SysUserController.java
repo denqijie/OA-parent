@@ -25,6 +25,16 @@ public class SysUserController {
     private SysUserService sysUserService;
 
     /**
+     *  根据用户id更改用户的状态
+     */
+    @ApiOperation("更新状态")
+    @GetMapping("/updateStatus/{id}/{status}")
+    public Result updateStatus(@PathVariable Long id, @PathVariable Integer status){
+        sysUserService.updateStatus(id,status);
+        return Result.ok();
+    }
+
+    /**
      *  用户条件分页查询
      *  page 表示当前页/ limit 表示每页显示记录数
      *  SysUserQueryVo 条件对象(username)
