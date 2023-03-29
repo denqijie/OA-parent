@@ -6,14 +6,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dqj.auth.service.SysRoleService;
 import com.dqj.common.result.Result;
 import com.dqj.model.system.SysRole;
+import com.dqj.vo.system.AssginRoleVo;
 import com.dqj.vo.system.SysRoleQueryVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Map;
 
 /**
  *  角色管理CRUD接口
@@ -25,6 +26,26 @@ public class SysRoleController {
     //  注入Service
     @Autowired
     private SysRoleService sysRoleService;
+
+    /**
+     *  根据用户获取角色数据
+     */
+    @ApiOperation("根据用户获取角色数据")
+    @GetMapping("/toAssign/{userId}")
+    public Result toAssign(@PathVariable Long userId){
+        Map<String,Object> map = sysRoleService.findRoleDataByUserId(userId);
+        return Result.ok(map);
+    }
+
+    /**
+     *  根据用户分配角色
+     */
+    @ApiOperation("根据用户分配角色")
+    @PostMapping("/doAssign")
+    public Result doAssign(@RequestBody AssginRoleVo assginRoleVo){
+        sysRoleService.doAssign(assginRoleVo);
+        return Result.ok();
+    }
 
     /**
      *  根据id查询角色
@@ -63,7 +84,7 @@ public class SysRoleController {
         String roleName = sysRoleQueryVo.getRoleName();
         //  org.springframework.util包下的StringUtils工具类方法isEmpty判断条件
         if(!StringUtils.isEmpty(roleName)){
-            //  封装
+            //  封装 分页搜索框的查询条件
             wrapper.like(SysRole::getRoleName, roleName);
         }
         //  3.调用service的方法实现
