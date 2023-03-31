@@ -52,7 +52,7 @@ public class SysMenu extends BaseEntity {
 	private Integer status;
 
 	// 下级列表
-	@TableField(exist = false)
+	@TableField(exist = false) //exist = false 表示表里面没有对应字段
 	private List<SysMenu> children;
 	//是否选中
 	@TableField(exist = false)
