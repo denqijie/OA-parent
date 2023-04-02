@@ -3,6 +3,7 @@ package com.dqj.auth.controller;
 import com.dqj.auth.service.SysMenuService;
 import com.dqj.common.result.Result;
 import com.dqj.model.system.SysMenu;
+import com.dqj.vo.system.AssginMenuVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,29 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/system/sysMenu")
 public class SysMenuController {
+
     @Autowired
     private SysMenuService sysMenuService;
+
+    /**
+     *  查询所有菜单和角色分配菜单
+     */
+    @ApiOperation("查询所有菜单和角色分配菜单")
+    @GetMapping("/toAssign/{roleId}")
+    public Result toAssign(@PathVariable Long roleId){
+        List<SysMenu> sysMenuList = sysMenuService.findMenuByRoleId(roleId);
+        return Result.ok(sysMenuList);
+    }
+
+    /**
+     *  角色分配菜单
+     */
+    @ApiOperation("角色分配菜单")
+    @PostMapping("/doAssign")
+    public Result doAssign(@RequestBody AssginMenuVo assginMenuVo){
+        sysMenuService.doAssign(assginMenuVo);
+        return Result.ok();
+    }
 
     /**
      *  菜单列表
