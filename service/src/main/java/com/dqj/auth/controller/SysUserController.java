@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dqj.auth.service.SysUserService;
 import com.dqj.common.result.Result;
+import com.dqj.common.utils.MD5;
 import com.dqj.model.system.SysUser;
 import com.dqj.vo.system.SysUserQueryVo;
 import io.swagger.annotations.Api;
@@ -84,6 +85,8 @@ public class SysUserController {
     @ApiOperation("保存用户")
     @PostMapping("/save")
     public Result save(@RequestBody SysUser sysUser){ //  @RequestBody通过请求体传递 以JSON格式封装数据
+        //密码进行加密存储（MD5加密）
+        sysUser.setPassword(MD5.encrypt(sysUser.getPassword()));
         sysUserService.save(sysUser);
         return Result.ok();
     }
