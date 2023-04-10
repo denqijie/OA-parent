@@ -37,6 +37,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!--引入spring-security安全子模块-->
+        <dependency>
+            <groupId>com.dqj</groupId>
+            <artifactId>spring-security</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <!--MP代码生成器依赖-->
         <dependency>
             <groupId>com.baomidou</groupId>
