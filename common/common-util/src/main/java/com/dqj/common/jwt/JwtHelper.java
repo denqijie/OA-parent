@@ -64,14 +64,4 @@ public class JwtHelper {
         }
     }
 
-    //测试
-    public static void main(String[] args) {
-        String token = JwtHelper.createToken(1L, "denqijie");
-        Long userId = JwtHelper.getUserId(token);
-        String username = JwtHelper.getUsername(token);
-
-        System.out.println(token);
-        System.out.println(userId);
-        System.out.println(username);
-    }
 }
