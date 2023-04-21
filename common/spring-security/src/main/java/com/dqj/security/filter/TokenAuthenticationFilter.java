@@ -1,10 +1,13 @@
 package com.dqj.security.filter;
 
+import com.alibaba.fastjson.JSON;
 import com.dqj.common.jwt.JwtHelper;
 import com.dqj.common.result.ResponseUtil;
 import com.dqj.common.result.Result;
 import com.dqj.common.result.ResultCodeEnum;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -13,12 +16,22 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  *  认证解析token过滤器
  */
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
+
+    private RedisTemplate redisTemplate;
+
+    //构造注入
+    public TokenAuthenticationFilter(RedisTemplate redisTemplate){
+        this.redisTemplate = redisTemplate;
+    }
 
     /**
      *  过滤并解析token
@@ -53,7 +66,20 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         if(!StringUtils.isEmpty(token)){
             String username = JwtHelper.getUsername(token);
             if(!StringUtils.isEmpty(username)){
-                return new UsernamePasswordAuthenticationToken(username,null,Collections.emptyList());
+                //通过username从redis获取权限数据
+                String authString = (String) redisTemplate.opsForValue().get(username);
+                //把redis获取字符串权限数据转换成集合类型 List<SimpleGrantedAuthority>
+                if(!StringUtils.isEmpty(authString)){
+                    List<Map> mapList = JSON.parseArray(authString, Map.class);
+                    //创建集合用来存数据
+                    List<SimpleGrantedAuthority> authList = new ArrayList<>();
+                    for (Map map : mapList) {
+                        authList.add(new SimpleGrantedAuthority((String) map.get("authority")));
+                    }
+                    return new UsernamePasswordAuthenticationToken(username,null, authList);
+                }
+                //数据为空则返回空的集合
+                return new UsernamePasswordAuthenticationToken(username,null, new ArrayList<>());
             }
         }
         return null;
